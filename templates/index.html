@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Projet NSI - H&H Team</title>
+    <style>
+        .hero {
+            min-height: 100vh;
+            background-color: #f3f4f6; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            margin-bottom: 2rem;
+        }
+
+        .hero-content form {
+            margin-bottom: 2rem;
+        }
+
+        .hero-content input {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .hero-content button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: #74369e; 
+            color: #fff; 
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .hero-content button:hover {
+            background-color: #6c45a0; 
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .result {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        .result:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+        .description {
+            font-size: 16px;
+            color: #666;
+        }
+        .url {
+            font-size: 14px;
+            color: #999;
+        }
+        a{
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Projet NSI - H&H Team</h1>
+            <p>Merci d'être venu sur ce site. Nous sommes deux étudiants de première du lycée Gustave Flaubert et nous avons eu l'ambition de recréer Google. Bonne visite !</p>
+
+            <form id="keyword-form"">
+                <h3>Entrez un mot-clé...</h3>
+                <input id="key" name="key" type="text" placeholder="Elon Musk..." />
+                <button type="submit">Envoyer</button>
+            </form>
+            <div class="container"  id="results">
+
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/data', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResults(data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des données:', error);
+            });
+        });
+
+        function displayResults(data) {
+            var container = document.getElementById("results");
+            data.forEach(item => {
+                var resultDiv = document.createElement("div");
+                resultDiv.classList.add("result");
+                resultDiv.innerHTML = `
+                    <a href="${item.url}" target="_blank">
+                    <div class="title">${item.title}</div>
+                    <div class="description">${item.description}</div>
+                    </a>
+                `;
+                container.appendChild(resultDiv);
+            });
+        }
+        document.getElementById("keyword-form").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+
+            var formData = new FormData(this);
+
+            fetch('/keywording', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+        });
+    </script>
+</body>
+</html>
